@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-native-community/datetimepicker": "6.7.3",
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/material-top-tabs": "^6.6.2",
     "@react-navigation/native": "^6.1.6",
@@ -17,10 +18,13 @@
     "axios": "^1.4.0",
     "expo": "~48.0.15",
     "expo-status-bar": "~1.4.4",
+    "lottie-react-native": "5.1.4",
     "nativewind": "^2.0.11",
     "react": "18.2.0",
     "react-native": "0.71.7",
     "react-native-dotenv": "^3.4.8",
+    "react-native-onboarding-swiper": "^1.2.0",
+    "react-native-select-dropdown": "^3.3.3",
     "react-native-tab-view": "^3.5.1",
     "react-redux": "^8.0.5"
   },
