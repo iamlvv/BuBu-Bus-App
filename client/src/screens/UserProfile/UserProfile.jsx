@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import HelpCenter from './HelpCenter'
 import About from './About'
 import { createStackNavigator } from '@react-navigation/stack'
@@ -8,6 +8,10 @@ import { Feather } from '@expo/vector-icons';
 import SelectDropdown from 'react-native-select-dropdown'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native'
+import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import axios from 'axios'
+
 const Stack = createStackNavigator()
 
 const styles = StyleSheet.create({
@@ -18,10 +22,40 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F7F9'
   }
 })
+const ipaddress = "10.0.146.197"
 const UserProfileMain = () => {
+  const [accessToken, setAccessToken] = useState(null);
+  const [userInfo, setUserInfo] = useState(null)
+  const getData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('userInfo')
+      if (jsonValue != null) {
+        const response = await axios.get(`http://${ipaddress}:3000/api/user/me`, {
+          headers: {
+            Authorization: `Bearer ${JSON.parse(jsonValue).data.accessToken}`
+          }
+        })
+        console.log(response.data.data)
+        setEmail(response.data.data.email)
+        setPhone(response.data.data.phone)
+        setLastName(response.data.data.lastName)
+        setFirstName(response.data.data.firstName)
+        setDob(response.data.data.dob ? response.data.data.dob : '01/01/2000')
+        return JSON.parse(jsonValue).data;
+      }
+
+    } catch (e) {
+      console.log("error reading value");
+    }
+  }
+  useEffect(() => {
+    setUserInfo(getData())
+  }, [])
+
   const navigate = useNavigation();
-  const [lastName, setLastName] = useState('Nguyen')
-  const [firstName, setFirstName] = useState('Van A')
+
+  const [lastName, setLastName] = useState('')
+  const [firstName, setFirstName] = useState('')
   const [gender, setGender] = useState('Male')
   const [phone, setPhone] = useState('0123456789')
   const [dob, setDob] = useState('01/01/2000')
@@ -51,6 +85,44 @@ const UserProfileMain = () => {
   const showTimepicker1 = () => {
     showMode1('date');
   };
+  const removeData = async () => {
+    try {
+      await AsyncStorage.removeItem('userInfo')
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  const handleChange = () => {
+    fetch(`http://${ipaddress}:3000/api/user/me`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken.accessToken}`
+      },
+      body: JSON.stringify({
+        firstName: firstName,
+        lastName: lastName,
+        gender: gender,
+        phone: phone,
+        dob: dob,
+        email: email
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        alert('Update successfully')
+      }
+      )
+      .catch(err => {
+        console.log(err)
+      }
+      )
+  }
+  const handleLogout = () => {
+    removeData();
+    navigate.navigate('Login');
+  }
   return (
     <View className=''>
       {/* Header */}
@@ -63,6 +135,9 @@ const UserProfileMain = () => {
           <TouchableOpacity onPress={() => navigate.navigate('About')}>
             <Feather name="info" size={24} color="white" />
           </TouchableOpacity>
+          <TouchableOpacity onPress={handleLogout}>
+            <Ionicons name="exit-outline" size={24} color="white" />
+          </TouchableOpacity>
         </View>
       </View>
       {/* Body */}
@@ -72,21 +147,21 @@ const UserProfileMain = () => {
           <Image source={require('../../images/userAvatar.png')} style={{ width: 100, height: 100, marginTop: -50 }} />
         </View>
 
-        <View style={styles.backgroundColor} className = 'p-5 rounded-lg flex flex-col gap-1 mt-5'>
+        <View style={styles.backgroundColor} className='p-5 rounded-lg flex flex-col gap-1 mt-5'>
           <View className='flex flex-row items-center justify-between'>
-            <Text className = 'font-bold'>Last Name</Text>
-            <TextInput onChangeText={text => setLastName(text)} value={lastName}
+            <Text className='font-bold'>Last Name</Text>
+            <TextInput onChangeText={text => setLastName(text)} value={lastName || ""}
               className='border border-gray-200 rounded-lg p-1 bg-white'
             />
           </View>
           <View className='flex flex-row  items-center justify-between'>
-            <Text className = 'font-bold'>First Name</Text>
-            <TextInput onChangeText={text => setFirstName(text)} value={firstName}
+            <Text className='font-bold'>First Name</Text>
+            <TextInput onChangeText={text => setFirstName(text)} value={firstName || ""}
               className='border border-gray-200 rounded-lg p-1 bg-white'
             />
           </View>
           <View className='flex flex-row items-center justify-between'>
-            <Text className = 'font-bold'>Gender</Text>
+            <Text className='font-bold'>Gender</Text>
             <SelectDropdown
               data={Gender}
               onSelect={(selectedItem, index) => {
@@ -103,13 +178,13 @@ const UserProfileMain = () => {
             />
           </View>
           <View className='flex flex-row items-center justify-between'>
-            <Text className = 'font-bold'>Phone</Text>
-            <TextInput onChangeText={text => setPhone(text)} value={phone}
+            <Text className='font-bold'>Phone</Text>
+            <TextInput onChangeText={text => setPhone(text)} value={phone || ''}
               className='border border-gray-200 rounded-lg p-1 bg-white'
             />
           </View>
           <View className='flex flex-row items-center justify-between'>
-            <Text className = 'font-bold'>Date of Birth</Text>
+            <Text className='font-bold'>Date of Birth</Text>
             <TouchableOpacity onPress={showTimepicker1}>
               <Text className='border rounded-lg border-gray-200 p-1 bg-white'>
                 {dob}
@@ -125,8 +200,8 @@ const UserProfileMain = () => {
             )}
           </View>
           <View className='flex flex-row items-center justify-between'>
-            <Text className = 'font-bold'>Email</Text>
-            <TextInput onChangeText={text => setEmail(text)} value={email}
+            <Text className='font-bold'>Email</Text>
+            <TextInput onChangeText={text => setEmail(text)} value={email || ''}
               className='border border-gray-200 rounded-lg p-1 bg-white'
             />
           </View>
@@ -135,6 +210,7 @@ const UserProfileMain = () => {
         <View className='items-center flex'>
           <TouchableOpacity
             className=' rounded-lg p-2 mt-5' style={{ backgroundColor: '#009580' }}
+            onPress={handleChange}
           >
             <Text className='text-white font-bold'>Save Changes</Text>
           </TouchableOpacity>

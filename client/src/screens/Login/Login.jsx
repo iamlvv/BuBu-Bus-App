@@ -1,6 +1,9 @@
 import React from 'react'
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import axios from 'axios'
 const styles = StyleSheet.create({
   button: {
     backgroundColor: '#009580',
@@ -10,10 +13,42 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   }
 })
+const ipaddress = "10.0.146.197"
+
 const Login = () => {
   const navigate = useNavigation();
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
+  // const getData = async () => {
+  //   try {
+  //     const jsonValue = await AsyncStorage.getItem('userInfo')
+  //     return jsonValue != null ? JSON.parse(jsonValue) : null;
+  //   } catch (e) {
+  //     // error reading value
+  //     console.log(e);
+  //   }
+  // }
+  const storeData = async(data) => {
+    try {
+      await AsyncStorage.setItem('userInfo', JSON.stringify(data))
+      console.log("store data success")
+    } catch (e) {
+      // saving error
+      console.log(e);
+    }
+  }
+  const handleLogin = async() => {
+    const response = await axios.post(`http://${ipaddress}:3000/api/auth/login`, {
+      email: email,
+      password: password
+    }
+    )
+    await storeData(response.data)
+    //getData()
+    console.log(response.data)
+    navigate.navigate('Home')
+    //console.log(process.env.IPADDRESS)
+  }
   return (
     <View>
       <View className='flex items-center mt-20 mb-10'>
@@ -26,7 +61,7 @@ const Login = () => {
           <TextInput placeholder='Please enter your email'
             className='border border-gray-200 rounded-lg p-2 ml-3 mr-3'
             keyboardType='email-address'
-            value= {email || ""}
+            value={email || ""}
             onChangeText={(text) => setEmail(text)}
           />
         </View>
@@ -35,13 +70,13 @@ const Login = () => {
           <TextInput placeholder='Please enter your password'
             className='border border-gray-200 rounded-lg p-2 ml-3 mr-3'
             secureTextEntry={true}
-            value= {password || ""}
+            value={password || ""}
             onChangeText={(text) => setPassword(text)}
           />
         </View>
         <View className='flex items-center'>
           <TouchableOpacity className="px-28 py-4 rounded-2xl ml-5 mr-5" style={styles.button}
-            onPress={() => navigate.navigate('Home')}
+            onPress={handleLogin}
           >
             <Text className='font-bold text-white'>LOG IN</Text>
           </TouchableOpacity>
@@ -49,12 +84,12 @@ const Login = () => {
         <View className='flex items-center'>
           <Text className='text-gray-500 mb-5'>Or with</Text>
           <View className='flex flex-row gap-3 mb-5'>
-            <TouchableOpacity onPress={() => navigate.navigate('Home')}>
+            <TouchableOpacity>
               <Image source={require('../../images/google.png')}
 
               />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigate.navigate('Home')}>
+            <TouchableOpacity>
               <Image source={require('../../images/facebook.png')}
               />
             </TouchableOpacity>

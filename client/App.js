@@ -16,11 +16,30 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 function Home() {
+  const [userInfoFromStorage, setUserInfoFromStorage] = useState(null);
+  const getData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('userInfo')
+      if (jsonValue != null) {
+        console.log("get data success")
+        setUserInfoFromStorage(JSON.parse(jsonValue))
+        //console.log(userInfoFromStorage)
+        return JSON.parse(jsonValue);
+      }
+
+    } catch (e) {
+      console.log("error reading value");
+    }
+  }
+
   const navigate = useNavigation();
+
   return (
     <Tab.Navigator>
       <Tab.Screen name="Map" component={Homepage}
@@ -47,7 +66,11 @@ function Home() {
             <Ionicons name="ios-notifications" size={size} color={color} />
           ),
           tabBarActiveTintColor: '#009580',
-          headerShown: false,
+          headerStyle: {
+            backgroundColor: '#009580',
+          },
+          headerTintColor: '#fff',
+          //headerShown: false,
         }}
       />
       <Tab.Screen name="User Profile" component={UserProfile}
@@ -69,10 +92,10 @@ export default function App() {
         <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
         <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
         <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={Login} 
-        options={{ cardStyle: { backgroundColor: '#fff' }, headerStyle: { backgroundColor: '#009580' }, headerTintColor: '#fff' }}/>
-        <Stack.Screen name="Signup" component={Signup} 
-        options={{ cardStyle: { backgroundColor: '#fff' }, headerStyle: { backgroundColor: '#009580' }, headerTintColor: '#fff' }} />
+        <Stack.Screen name="Login" component={Login}
+          options={{ cardStyle: { backgroundColor: '#fff' }, headerStyle: { backgroundColor: '#009580' }, headerTintColor: '#fff' }} />
+        <Stack.Screen name="Signup" component={Signup}
+          options={{ cardStyle: { backgroundColor: '#fff' }, headerStyle: { backgroundColor: '#009580' }, headerTintColor: '#fff' }} />
       </Stack.Navigator>
     </NavigationContainer>
 
