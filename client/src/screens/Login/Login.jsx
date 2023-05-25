@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   }
 })
-const ipaddress = "10.0.146.197"
+const ipaddress = process.env.IPADDRESS
 
 const Login = () => {
   const navigate = useNavigation();

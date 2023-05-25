@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F7F9'
   }
 })
-const ipaddress = "10.0.146.197"
+const ipaddress = process.env.IPADDRESS
 const UserProfileMain = () => {
   const [accessToken, setAccessToken] = useState(null);
   const [userInfo, setUserInfo] = useState(null)
@@ -51,7 +51,6 @@ const UserProfileMain = () => {
   useEffect(() => {
     setUserInfo(getData())
   }, [])
-
   const navigate = useNavigation();
 
   const [lastName, setLastName] = useState('')
