@@ -27,6 +27,7 @@ const Signup = () => {
         phone: phone
       })
       console.log(response.data.data)
+      navigate.navigate('Home')
     }
     catch (e) {
       console.log(e);
@@ -39,7 +40,6 @@ const Signup = () => {
         return
       }
       signup()
-      navigate.navigate('Home')
     }
     else {
       alert("Please fill in all the fields")
