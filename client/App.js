@@ -89,9 +89,16 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName='SplashScreen'>
-        <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+        <Stack.Screen name="Home" component={Home} options={{
+          headerShown: false,
+          headerLeft: () => null,
+          gestureEnabled: false
+        }} />
         <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} options={{ headerShown: false,
+          headerLeft: () => null,
+            gestureEnabled: false
+         }} />
         <Stack.Screen name="Login" component={Login}
           options={{ cardStyle: { backgroundColor: '#fff' }, headerStyle: { backgroundColor: '#009580' }, headerTintColor: '#fff' }} />
         <Stack.Screen name="Signup" component={Signup}

@@ -225,7 +225,8 @@ const UserProfile = () => {
       <Stack.Screen name="UserProfile" component={UserProfileMain}
         options={{ headerShown: false, cardStyle: { backgroundColor: '#fff' } }} />
       <Stack.Screen name="Help Center" component={HelpCenter}
-        options={{ cardStyle: { backgroundColor: '#fff' }, headerStyle: { backgroundColor: '#009580' }, headerTintColor: '#fff' }} />
+        options={{ cardStyle: { backgroundColor: '#fff' }, 
+        headerStyle: { backgroundColor: '#009580' }, headerTintColor: '#fff' }} />
       <Stack.Screen name="About" component={About}
         options={{ cardStyle: { backgroundColor: '#fff' }, headerStyle: { backgroundColor: '#009580' }, headerTintColor: '#fff' }} />
     </Stack.Navigator>
