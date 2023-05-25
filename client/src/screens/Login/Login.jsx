@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   }
 })
-const ipaddress = process.env.IPADDRESS
+const ipaddress = "mobile-be.onrender.com"
 
 const Login = () => {
   const navigate = useNavigation();
@@ -38,7 +38,7 @@ const Login = () => {
     }
   }
   const handleLogin = async() => {
-    const response = await axios.post(`http://${ipaddress}:3000/api/auth/login`, {
+    const response = await axios.post(`https://mobile-be.onrender.com/api/auth/login`, {
       email: email,
       password: password
     }

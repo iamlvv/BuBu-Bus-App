@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F7F9'
   }
 })
-const ipaddress = process.env.IPADDRESS
+const ipaddress = "mobile-be.onrender.com"
 const UserProfileMain = () => {
   const [accessToken, setAccessToken] = useState(null);
   const [userInfo, setUserInfo] = useState(null)
@@ -30,7 +30,8 @@ const UserProfileMain = () => {
     try {
       const jsonValue = await AsyncStorage.getItem('userInfo')
       if (jsonValue != null) {
-        const response = await axios.get(`http://${ipaddress}:3000/api/user/me`, {
+        setAccessToken(JSON.parse(jsonValue).data.accessToken)
+        const response = await axios.get(`https://mobile-be.onrender.com/api/user/me`, {
           headers: {
             Authorization: `Bearer ${JSON.parse(jsonValue).data.accessToken}`
           }
@@ -41,6 +42,7 @@ const UserProfileMain = () => {
         setLastName(response.data.data.lastName)
         setFirstName(response.data.data.firstName)
         setDob(response.data.data.dob ? response.data.data.dob : '01/01/2000')
+        setGender(response.data.data.gender ? response.data.data.gender : "" )
         return JSON.parse(jsonValue).data;
       }
 
@@ -92,11 +94,11 @@ const UserProfileMain = () => {
     }
   }
   const handleChange = () => {
-    fetch(`http://${ipaddress}:3000/api/user/me`, {
+    fetch(`https://mobile-be.onrender.com/api/user/me`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken.accessToken}`
+        Authorization: `Bearer ${accessToken}`
       },
       body: JSON.stringify({
         firstName: firstName,
@@ -160,7 +162,7 @@ const UserProfileMain = () => {
             />
           </View>
           <View className='flex flex-row items-center justify-between'>
-            <Text className='font-bold'>Gender</Text>
+            <Text className='font-bold'>Gender : {gender}</Text>
             <SelectDropdown
               data={Gender}
               onSelect={(selectedItem, index) => {
@@ -172,7 +174,7 @@ const UserProfileMain = () => {
               rowTextForSelection={(item, index) => {
                 return item
               }}
-              defaultValue={gender}
+              defaultValue={gender }
               buttonStyle={{ width: 100, height: 30, backgroundColor: '#fff', borderRadius: 5, borderColor: '#ccc', borderWidth: 1 }}
             />
           </View>

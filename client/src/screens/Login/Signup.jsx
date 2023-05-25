@@ -12,25 +12,36 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   }
 })
-const ipaddress = process.env.IPADDRESS
+const ipaddress = "mobile-be.onrender.com"
 
 const Signup = () => {
   const navigate = useNavigation();
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [phone, setPhone] = React.useState('')
+  const storeData = async(data) => {
+    try {
+      await AsyncStorage.setItem('userInfo', JSON.stringify(data))
+      console.log("store data success")
+    } catch (e) {
+      // saving error
+      console.log(e);
+    }
+  }
   const signup = async() => {
     try {
-      const response = await axios.post(`http://${ipaddress}:3000/api/auth/register`, {
+      const response = await axios.post(`https://mobile-be.onrender.com/api/auth/register`, {
         email: email,
         password: password,
         phone: phone
       })
+      await storeData(response.data)
       console.log(response.data.data)
       navigate.navigate('Home')
     }
     catch (e) {
       console.log(e);
+      alert("Email or phone number already exists")
     }
   }
   const handleSignup = () => {
