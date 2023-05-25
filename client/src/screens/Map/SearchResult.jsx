@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Button, Dimensions, Platform, Animated, PanResponder, ScrollView, Image, TouchableOpacity } from 'react-native'
 import React, { useRef, useState } from 'react'
-import { Portal } from 'react-native-paper'
+import { Portal } from 'react-native-paper';
 import busList from './BusList';
 import { AntDesign } from '@expo/vector-icons';
 
